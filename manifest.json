@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "My Gemini Quiz Extension",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "version": "2.0",
+  "description": "Generates a quiz after a YouTube video using a hybrid transcript approach.",
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "https://generativelanguage.googleapis.com/",
+    "https://www.youtube-transcript.io/",
+    "http://127.0.0.1:3000/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/watch*"],
+      "js": ["content.js"],
+      "css": ["quiz.css"]
+    }
+  ],
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "48": "images/icon-48.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["quiz.html"],
+      "matches": ["*://*.youtube.com/*"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
