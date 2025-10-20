@@ -15,7 +15,9 @@ const cacheDir = path.join(__dirname, 'quiz_cache');
 
 
 // --- MIDDLEWARE ---
-app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
 
 // --- ROUTES ---
 app.post('/generate-quiz', async (req, res) => {
