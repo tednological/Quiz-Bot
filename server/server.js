@@ -1,22 +1,14 @@
-// server.js - UPDATED to generate quiz directly from YouTube URL using Gemini
-
 const path = require('path');
 const express = require('express');
 const fs = require('fs');
-// Remove: const { default: YTDlpWrap } = require('yt-dlp-wrap');
-// Remove: const OpenAI = require('openai');
 
 // --- Google Generative AI SDK (FOR SERVER-SIDE USE) ---
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // --- CONFIGURATION ---
 const app = express();
-const port = 3000;
-
-// IMPORTANT: Use environment variables for API keys in production!
-const GEMINI_API_KEY = 'AIzaSyA1-HqCeDNt4Jf4y99em818BB8u0RucMdI'; // 👈 REPLACE THIS WITH YOUR GEMINI API KEY!
+const port = process.env.PORT || 3000; 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-
 const cacheDir = path.join(__dirname, 'quiz_cache'); 
 
 
@@ -25,7 +17,6 @@ const cacheDir = path.join(__dirname, 'quiz_cache');
 app.use(express.json());
 
 // --- ROUTES ---
-// Renamed from '/transcribe' to '/generate-quiz' for clarity
 app.post('/generate-quiz', async (req, res) => {
   const { videoId } = req.body; // Expecting videoId from the client
   if (!videoId) {
@@ -50,7 +41,7 @@ app.post('/generate-quiz', async (req, res) => {
     console.log(`Cache miss for video ID: ${videoId}. Generating new quiz.`);
 
     // --- Gemini API Call with YouTube URL ---
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Use 1.5-flash or gemini-pro
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); 
 
     const prompt = `
       You are an assistant designed to create quizzes from video content.
@@ -77,7 +68,7 @@ app.post('/generate-quiz', async (req, res) => {
         prompt,
         { fileData: { fileUri: youtubeUrl, mimeType: "video/mp4" } }
       ],
-      { timeout: 300000 } // 👈 Add this timeout option
+      { timeout: 300000 } 
     );
     
     const response = await result.response;
@@ -98,10 +89,8 @@ app.post('/generate-quiz', async (req, res) => {
 
   } catch (error) {
     console.error('An error occurred:', error);
-    // You might want to include error.response.text() for more debug info
     res.status(500).json({ error: `Failed to generate quiz: ${error.message}` });
   }
-  // No finally block needed for cleanup since we don't download local files anymore.
 });
 
 // --- SERVER START ---

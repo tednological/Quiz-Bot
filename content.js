@@ -1,5 +1,3 @@
-// content.js
-
 // --- Global State ---
 let quizData = [];
 let currentQuestionIndex = 0;
@@ -9,9 +7,7 @@ let selectedOption = null;
 let errorClearTimer = null;
 // --- Core Functions ---
 
-/**
- * Creates the "Generate Quiz" button on the YouTube page.
- */
+// Creates the "Generate Quiz" button on the YouTube page.
 function createQuizButton() {
   if (document.getElementById('yt-quiz-button')) {
     return;
@@ -27,7 +23,7 @@ function createQuizButton() {
     bottom: '20px',
     right: '20px',
     zIndex: '9999',
-    backgroundColor: '#ff0000', // YouTube Red
+    backgroundColor: '#ff0000', 
     color: 'white',
     border: 'none',
     padding: '12px 24px',
@@ -118,9 +114,7 @@ async function displayQuiz(data) {
 
 // --- Quiz UI and Logic ---
 
-/**
- * Sets up event listeners for the quiz buttons.
- */
+// Sets up event listeners for the quiz buttons.
 function setupQuizListeners() {
   // Use querySelector on the container to avoid conflicts
   const query = (selector) => quizContainer.querySelector(selector);
@@ -156,7 +150,7 @@ function showQuestion(index) {
 
   // Populate question and options
   query('#yt-quiz-question').textContent = questionData.question;
-  const optionButtons = queryAll('.yt-quiz-option'); // This will now work correctly
+  const optionButtons = queryAll('.yt-quiz-option'); 
 
   optionButtons.forEach(button => {
     const optionKey = button.dataset.option;
@@ -316,7 +310,7 @@ function showError(message) {
         if (errorBox && document.body.contains(errorBox)) {
             document.body.removeChild(errorBox);
         }
-    }, 5000); // The error disappears after 5 seconds
+    }, 5000); 
 }
 // --- Page Load Logic ---
 

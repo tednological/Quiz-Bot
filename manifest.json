@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "My Gemini Quiz Extension",
+  "name": "Gemini Quiz Extension",
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "version": "2.0",
-  "description": "Generates a quiz after a YouTube video using a hybrid transcript approach.",
+  "description": "Generates a quiz for a YouTube video using the Gemini API.",
   "host_permissions": [
     "*://*.youtube.com/*",
     "https://generativelanguage.googleapis.com/",

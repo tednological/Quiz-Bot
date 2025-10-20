@@ -1,6 +1,5 @@
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // We only expect one type of request now.
   if (message.type === 'generateQuiz') {
     (async () => {
       try {
@@ -27,7 +26,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // New function to call your server's quiz generation endpoint
 async function fetchAIQuizFromServer(videoId) {
-  const backendUrl = `http://127.0.0.1:3000/generate-quiz`; // Updated endpoint
+  const backendUrl = `http://127.0.0.1:3000/generate-quiz`; 
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',
