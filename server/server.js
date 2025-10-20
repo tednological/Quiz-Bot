@@ -16,10 +16,7 @@ const cacheDir = path.join(__dirname, 'quiz_cache');
 
 
 // --- MIDDLEWARE ---
-<<<<<<< HEAD
 app.use(express.json());
-=======
->>>>>>> b04fd7b9e2de58e8039c17d21623947742ba3949
 app.use(cors({
   origin: '*'
 }));
