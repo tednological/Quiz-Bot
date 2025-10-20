@@ -41,7 +41,7 @@ async function fetchAIQuizFromServer(videoId) {
     return data.quiz; 
   } catch (error) {
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw new Error(`Could not connect to the local backend server at ${backendUrl}. Please ensure the server is running (using 'node server.js').`);
+      throw new Error(`Could not connect to the backend server at ${backendUrl}. Please ensure the server is running and accessible.`);
     }
     throw error;
   }
