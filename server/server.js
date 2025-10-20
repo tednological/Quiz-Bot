@@ -1,120 +1,110 @@
-// server.js - Now with caching to prevent extra API calls
+// server.js - UPDATED to generate quiz directly from YouTube URL using Gemini
+
 const path = require('path');
 const express = require('express');
 const fs = require('fs');
-const { default: YTDlpWrap } = require('yt-dlp-wrap');
-const OpenAI = require('openai');
+// Remove: const { default: YTDlpWrap } = require('yt-dlp-wrap');
+// Remove: const OpenAI = require('openai');
+
+// --- Google Generative AI SDK (FOR SERVER-SIDE USE) ---
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // --- CONFIGURATION ---
 const app = express();
 const port = 3000;
-const openai = new OpenAI({
-  apiKey: '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', // 👈 Replace this
-});
-const ytDlpWrap = new YTDlpWrap();
-const cacheDir = path.join(__dirname, 'transcript_cache');
 
-// --- SELF-UPDATING YT-DLP ---
-(async () => {
-  try {
-    console.log('Checking for yt-dlp updates...');
-    await YTDlpWrap.downloadFromGithub();
-    console.log('yt-dlp is up to date.');
-  } catch (error) {
-    console.error('Failed to update yt-dlp:', error);
-  }
-})();
+// IMPORTANT: Use environment variables for API keys in production!
+const GEMINI_API_KEY = 'AIzaSyA1-HqCeDNt4Jf4y99em818BB8u0RucMdI'; // 👈 REPLACE THIS WITH YOUR GEMINI API KEY!
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+const cacheDir = path.join(__dirname, 'quiz_cache'); 
+
+
 
 // --- MIDDLEWARE ---
 app.use(express.json());
 
 // --- ROUTES ---
-app.post('/transcribe', async (req, res) => {
-  const { videoId } = req.body;
+// Renamed from '/transcribe' to '/generate-quiz' for clarity
+app.post('/generate-quiz', async (req, res) => {
+  const { videoId } = req.body; // Expecting videoId from the client
   if (!videoId) {
     return res.status(400).json({ error: 'videoId is required' });
   }
 
-  if (openai.apiKey === 'YOUR_OPENAI_API_KEY_HERE') {
-    return res.status(500).json({ error: 'Server configuration error: OpenAI API key is missing.' });
+  if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+    return res.status(500).json({ error: 'Server configuration error: Gemini API key is missing.' });
   }
 
-  const downloadDir = path.join(__dirname, 'downloads');
-  const audioFilePath = path.join(downloadDir, `${videoId}.m4a`);
-  const cachedTranscriptPath = path.join(cacheDir, `${videoId}.txt`);
+  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  const cachedQuizPath = path.join(cacheDir, `${videoId}.json`); // Cache JSON quiz
 
   try {
-    // --- CACHING LOGIC ---
-    if (fs.existsSync(cachedTranscriptPath)) {
-      console.log(`Cache hit for video ID: ${videoId}. Serving from file.`);
-      const cachedTranscript = fs.readFileSync(cachedTranscriptPath, 'utf-8');
-      return res.json({ transcript: cachedTranscript });
+    // --- CACHING LOGIC for the final quiz ---
+    if (fs.existsSync(cachedQuizPath)) {
+      console.log(`Cache hit for video ID: ${videoId}. Serving quiz from file.`);
+      const cachedQuiz = fs.readFileSync(cachedQuizPath, 'utf-8');
+      return res.json({ quiz: JSON.parse(cachedQuiz) });
     }
 
-    console.log(`Cache miss for video ID: ${videoId}. Fetching new transcript.`);
-    if (!fs.existsSync(downloadDir)) {
-      fs.mkdirSync(downloadDir);
-    }
+    console.log(`Cache miss for video ID: ${videoId}. Generating new quiz.`);
 
-    console.log('Downloading audio...');
-    // --- ENHANCED LOGGING ---
-    // We will now capture the output from yt-dlp to see exactly what it's doing.
-    let ytDlpStdErr = '';
-    const ytDlpProcess = ytDlpWrap.exec([
-      `https://www.youtube.com/watch?v=${videoId}`,
-      '--no-playlist',
-      '-f', 'bestaudio[ext=m4a]/bestaudio',
-      '-o', audioFilePath,
-    ]);
+    // --- Gemini API Call with YouTube URL ---
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Use 1.5-flash or gemini-pro
 
-    ytDlpProcess.on('stderr', (data) => {
-        ytDlpStdErr += data.toString();
-        console.error(`yt-dlp stderr: ${data.toString()}`);
-    });
+    const prompt = `
+      You are an assistant designed to create quizzes from video content.
+      Based on the provided YouTube video, generate a 5-question multiple-choice quiz.
+      
+      RULES:
+      - The "options" field must be an object with keys "A", "B", "C", and "D".
+      - The "correctAnswer" must be one of those keys ("A", "B", "C", or "D").
+      - Your entire response must be a single, valid JSON array.
+      - DO NOT include any introductory text, explanations, or markdown formatting like \`\`\`json.
+      - Your output should be only the raw JSON array and nothing else.
 
-    // Wait for the process to finish
-    await new Promise((resolve, reject) => {
-        ytDlpProcess.on('close', resolve);
-        ytDlpProcess.on('error', reject);
-    });
+      EXAMPLE:
+      [
+        { "question": "What is the main topic?", "options": { "A": "Topic 1", "B": "Topic 2", "C": "Topic 3", "D": "Topic 4" }, "correctAnswer": "C" }
+      ]
+      
+      Please generate the quiz based on the content of this video.
+    `;
+
+    // Pass the prompt and the YouTube URL directly to generateContent
+    const result = await model.generateContent(
+      [
+        prompt,
+        { fileData: { fileUri: youtubeUrl, mimeType: "video/mp4" } }
+      ],
+      { timeout: 300000 } // 👈 Add this timeout option
+    );
     
-    console.log('Audio download process finished.');
-
-    if (!fs.existsSync(audioFilePath)) {
-      throw new Error(`yt-dlp failed to download the audio file. Stderr: ${ytDlpStdErr}`);
-    }
-
-    console.log('Transcribing with OpenAI Whisper...');
-    const transcriptionResponse = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(audioFilePath),
-      model: 'whisper-1',
-    });
-    const newTranscript = transcriptionResponse.text;
+    const response = await result.response;
+    const rawText = response.text();
     
-    console.log('Transcription successful.');
+    // Clean and parse the JSON response from the model
+    const cleanedJson = rawText.replace(/```json\n|```/g, '').trim();
+    const quiz = JSON.parse(cleanedJson);
 
+    // Save the new quiz to cache
     if (!fs.existsSync(cacheDir)) {
       fs.mkdirSync(cacheDir);
     }
-    fs.writeFileSync(cachedTranscriptPath, newTranscript, 'utf-8');
-    console.log(`Saved new transcript to cache at ${cachedTranscriptPath}`);
+    fs.writeFileSync(cachedQuizPath, JSON.stringify(quiz, null, 2), 'utf-8');
+    console.log(`Saved new quiz to cache at ${cachedQuizPath}`);
     
-    res.json({ transcript: newTranscript });
+    res.json({ quiz: quiz }); // Send the quiz back to the client
 
   } catch (error) {
     console.error('An error occurred:', error);
-    res.status(500).json({ error: `Failed to process video: ${error.message}` });
-  } finally {
-    if (fs.existsSync(audioFilePath)) {
-      fs.unlinkSync(audioFilePath);
-      console.log(`Cleaned up ${audioFilePath}`);
-    }
+    // You might want to include error.response.text() for more debug info
+    res.status(500).json({ error: `Failed to generate quiz: ${error.message}` });
   }
+  // No finally block needed for cleanup since we don't download local files anymore.
 });
 
 // --- SERVER START ---
 app.listen(port, () => {
-  // --- FIX: Corrected the IP address typo ---
   console.log(`Backend server listening at http://127.0.0.1:${port}`);
 });
-

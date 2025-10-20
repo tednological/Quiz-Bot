@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What was Kent C. Dodds' initial stance on TypeScript in 2017, as mentioned in the video?",
+    "options": {
+      "A": "He was an early adopter and advocate.",
+      "B": "He didn't use TypeScript and didn't plan on supporting it.",
+      "C": "He expressed mixed feelings about TypeScript's future.",
+      "D": "He was curious but undecided about using TypeScript."
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "When was TypeScript first released by Microsoft?",
+    "options": {
+      "A": "2010",
+      "B": "2012",
+      "C": "2015",
+      "D": "2017"
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "Which major JavaScript framework adopted TypeScript a few years after its release, significantly boosting its popularity?",
+    "options": {
+      "A": "React",
+      "B": "Vue.js",
+      "C": "Angular 2",
+      "D": "jQuery"
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "According to DHH's article mentioned in the video, what is one of the primary reasons for dropping TypeScript from Turbo 8?",
+    "options": {
+      "A": "TypeScript lacks modern features.",
+      "B": "It causes frequent runtime errors.",
+      "C": "It \"pollutes the code with type gymnastics\" and requires an explicit compile step.",
+      "D": "It is too slow for large-scale projects."
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "What technology are projects like Svelte and SvelteKit using to incorporate type information and developer benefits without an explicit TypeScript compile step?",
+    "options": {
+      "A": "Babel plugins",
+      "B": "WebAssembly",
+      "C": "JSDoc comments",
+      "D": "Flow"
+    },
+    "correctAnswer": "C"
+  }
+]

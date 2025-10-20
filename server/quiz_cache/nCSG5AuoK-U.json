@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What does the speaker initially recall about \"taking that throne\"?",
+    "options": {
+      "A": "The immense power it bestowed.",
+      "B": "The heavy burden of responsibility.",
+      "C": "All that it meant and all that it did not.",
+      "D": "The grand celebrations that followed."
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "When referring to himself as a \"God of War,\" what specific negative outcomes does he list?",
+    "options": {
+      "A": "Victory, glory, and honor.",
+      "B": "Peace, harmony, and prosperity.",
+      "C": "Pain, suffering, and destruction.",
+      "D": "Courage, strength, and resilience."
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "How does the speaker view his pursuit of redemption?",
+    "options": {
+      "A": "As an achievable goal he is working towards.",
+      "B": "As something he knows he can never deserve.",
+      "C": "As a forgotten past ambition.",
+      "D": "As a path chosen for others, not himself."
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "What critical statement is made to the speaker about his past choices and losses?",
+    "options": {
+      "A": "You conquered many lands.",
+      "B": "You rebuilt civilization.",
+      "C": "You lost everything. And everyone.",
+      "D": "You found inner peace."
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "After being called \"cruel, arrogant, and selfish\" and a \"God of fools,\" what alternative identity does the speaker propose for himself?",
+    "options": {
+      "A": "A God of lies.",
+      "B": "A God of hope.",
+      "C": "A God of sacrifice.",
+      "D": "A God of solitude."
+    },
+    "correctAnswer": "B"
+  }
+]

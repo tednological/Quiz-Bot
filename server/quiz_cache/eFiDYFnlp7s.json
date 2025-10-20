@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What is the primary advantage of the Locust Laser Weapon System (LWS) over traditional missile systems for taking down drones?",
+    "options": {
+      "A": "Shorter range and limited power",
+      "B": "Higher cost per unit but longer lifespan",
+      "C": "Significantly lower cost per shot and reusable ammunition",
+      "D": "Easier to fix when something goes wrong in remote areas"
+    },
+    "correctAnswer": "C"
+  },
+  {
+    "question": "What is the approximate weight and height of the BlueHalo Locust Laser Weapon System (LWS)?",
+    "options": {
+      "A": "1,500 pounds, 5 feet high",
+      "B": "3,400 pounds, 7 feet high",
+      "C": "5,000 pounds, 10 feet high",
+      "D": "2,800 pounds, 6 feet high"
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "How is the BlueHalo Locust Laser Weapon System (LWS) typically operated by soldiers?",
+    "options": {
+      "A": "Through a complex custom control panel",
+      "B": "Using an Xbox controller and a video game-like interface",
+      "C": "Via voice commands and AI integration",
+      "D": "Manually, aiming with a joystick and binoculars"
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "According to the video, what are two major technical challenges that laser weapons like the Locust LWS face in combat?",
+    "options": {
+      "A": "High initial manufacturing cost and slow firing rate",
+      "B": "Extreme heat generation and adverse weather conditions",
+      "C": "Difficulty in targeting small objects and short battery life",
+      "D": "Vulnerability to cyberattacks and complex training requirements"
+    },
+    "correctAnswer": "B"
+  },
+  {
+    "question": "What is one of the main logistical challenges associated with deploying new laser weapons like the Locust LWS, as mentioned in the video?",
+    "options": {
+      "A": "Limited availability of combat-ready vehicles to mount them on",
+      "B": "Excessive noise produced during operation, revealing their position",
+      "C": "Lack of existing infrastructure to maintain and repair them in remote areas",
+      "D": "The need for specialized fuel that is difficult to transport"
+    },
+    "correctAnswer": "C"
+  }
+]
