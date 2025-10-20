@@ -1,4 +1,3 @@
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'generateQuiz') {
     (async () => {
@@ -26,7 +25,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // New function to call your server's quiz generation endpoint
 async function fetchAIQuizFromServer(videoId) {
-  const backendUrl = `http://127.0.0.1:3000/generate-quiz`; 
+  const backendUrl = `https://quiz-bot-cp9e.onrender.com/generate-quiz`; 
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',
@@ -42,7 +41,7 @@ async function fetchAIQuizFromServer(videoId) {
     return data.quiz; 
   } catch (error) {
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw new Error(`Could not connect to the local backend server at ${backendUrl}. Please ensure the server is running (using 'node server.js').`);
+      throw new Error(`Could not connect to the backend server at ${backendUrl}. Please ensure the server is running and accessible.`);
     }
     throw error;
   }

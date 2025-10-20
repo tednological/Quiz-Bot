@@ -1,3 +1,4 @@
+const cors = require('cors');
 const path = require('path');
 const express = require('express');
 const fs = require('fs');
@@ -6,6 +7,7 @@ const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // --- CONFIGURATION ---
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const app = express();
 const port = process.env.PORT || 3000; 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -15,6 +17,9 @@ const cacheDir = path.join(__dirname, 'quiz_cache');
 
 // --- MIDDLEWARE ---
 app.use(express.json());
+app.use(cors({
+  origin: '*'
+}));
 
 // --- ROUTES ---
 app.post('/generate-quiz', async (req, res) => {
