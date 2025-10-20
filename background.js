@@ -1,4 +1,3 @@
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'generateQuiz') {
     (async () => {
@@ -26,7 +25,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 // New function to call your server's quiz generation endpoint
 async function fetchAIQuizFromServer(videoId) {
-  const backendUrl = `http://127.0.0.1:3000/generate-quiz`; 
+  const backendUrl = `https://quiz-bot-cp9e.onrender.com/generate-quiz`; 
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',
