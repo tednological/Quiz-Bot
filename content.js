@@ -5,6 +5,7 @@ let score = 0;
 let quizContainer = null;
 let selectedOption = null;
 let errorClearTimer = null;
+
 // --- Core Functions ---
 
 // Creates the "Generate Quiz" button on the YouTube page.
@@ -14,10 +15,13 @@ function createQuizButton() {
   }
 
   const button = document.createElement('button');
-  button.innerHTML = '🧠 Generate Quiz';
+  button.innerHTML = `
+    <span class="yt-quiz-button-text">🧠 Generate Quiz</span>
+    <div class="yt-quiz-progress-bar"></div>
+  `;
   button.id = 'yt-quiz-button';
+  button.classList.add('yt-quiz-generate-button');
   
-  // Styling for the button
   Object.assign(button.style, {
     position: 'fixed',
     bottom: '20px',
@@ -38,18 +42,19 @@ function createQuizButton() {
   button.onmouseover = () => button.style.transform = 'scale(1.05)';
   button.onmouseout = () => button.style.transform = 'scale(1)';
 
-
   document.body.appendChild(button);
-  button.addEventListener('click', () => handleQuizGeneration('fast'));
+  button.addEventListener('click', () => handleQuizGeneration());
 }
 
 /**
  * Handles the logic for requesting a quiz from the background script.
- * @param {string} method - The transcript method ('fast' or 'whisper').
  */
-function handleQuizGeneration(method) {
+function handleQuizGeneration() {
   const button = document.getElementById('yt-quiz-button');
-  button.innerHTML = 'Working... 🧠';
+  const buttonText = button.querySelector('.yt-quiz-button-text');
+  
+  button.classList.add('loading');
+  buttonText.textContent = 'Working... 🧠';
   button.disabled = true;
 
   try {
@@ -58,19 +63,14 @@ function handleQuizGeneration(method) {
 
     chrome.runtime.sendMessage({
       type: 'generateQuiz',
-      method: method,
       videoId: videoId
     }, (response) => {
       if (chrome.runtime.lastError) {
         showError('An error occurred: ' + chrome.runtime.lastError.message);
         resetButton();
       } else if (response.status === 'success') {
-        button.style.display = 'none'; // Hide generate button
+        button.style.display = 'none';
         displayQuiz(response.data);
-      } else if (response.status === 'fallback') {
-        button.innerHTML = 'Transcript not found. Try AI? (Slower)';
-        button.disabled = false;
-        button.onclick = () => handleQuizGeneration('ai');
       } else {
         showError('Failed to generate quiz: ' + response.message);
         resetButton();
@@ -93,33 +93,46 @@ async function displayQuiz(data) {
       return;
   }
   
+  // If a quiz is already open, remove it before creating a new one.
+  if (document.getElementById('yt-quiz-container')) {
+    closeQuiz();
+  }
+
   quizData = data;
   currentQuestionIndex = 0;
   score = 0;
 
-  // Fetch the quiz HTML template
   const quizHtmlUrl = chrome.runtime.getURL('quiz.html');
   const response = await fetch(quizHtmlUrl);
   const quizHtml = await response.text();
 
-  // Create and inject the container
-  quizContainer = document.createElement('div');
-  quizContainer.innerHTML = quizHtml;
-  document.body.appendChild(quizContainer);
+  // Create a temporary div to inject the HTML into the body safely
+  const tempWrapper = document.createElement('div');
+  tempWrapper.innerHTML = quizHtml;
+  // Append the actual quiz container from the HTML, not the wrapper
+  document.body.appendChild(tempWrapper.firstElementChild);
+
+  // Now that it's in the DOM, find it by its ID to ensure we have the correct element.
+  quizContainer = document.getElementById('yt-quiz-container');
+  if (!quizContainer) {
+    showError("Failed to initialize the quiz container.");
+    return;
+  }
 
   setupQuizListeners();
   showQuestion(currentQuestionIndex);
 }
 
-
 // --- Quiz UI and Logic ---
 
 // Sets up event listeners for the quiz buttons.
 function setupQuizListeners() {
-  // Use querySelector on the container to avoid conflicts
   const query = (selector) => quizContainer.querySelector(selector);
 
+  // Add listeners for BOTH close buttons
+  query('#yt-quiz-x-close').addEventListener('click', closeQuiz);
   query('#yt-quiz-close').addEventListener('click', closeQuiz);
+  
   query('#yt-quiz-submit').addEventListener('click', handleSubmit);
   query('#yt-quiz-next').addEventListener('click', handleNext);
   query('#yt-quiz-restart').addEventListener('click', handleRestart);
@@ -148,7 +161,6 @@ function showQuestion(index) {
   query('#yt-quiz-next').classList.add('hidden');
   query('#yt-quiz-submit').disabled = true;
 
-  // Populate question and options
   query('#yt-quiz-question').textContent = questionData.question;
   const optionButtons = queryAll('.yt-quiz-option'); 
 
@@ -159,7 +171,6 @@ function showQuestion(index) {
       button.classList.remove('selected', 'correct', 'incorrect', 'hidden');
       button.disabled = false;
     } else {
-      // Hide button if option doesn't exist for this question
       button.classList.add('hidden');
     }
   });
@@ -184,10 +195,8 @@ function handleSubmit() {
     const correctAnswer = quizData[currentQuestionIndex].correctAnswer;
     const selectedAnswer = selectedOption.dataset.option;
 
-    // Disable all options
     queryAll('.yt-quiz-option').forEach(btn => btn.disabled = true);
 
-    // Provide feedback
     if (selectedAnswer === correctAnswer) {
         score++;
         selectedOption.classList.add('correct');
@@ -198,21 +207,17 @@ function handleSubmit() {
         feedback.textContent = `Incorrect. The right answer was ${correctAnswer}.`;
         feedback.className = 'incorrect-feedback';
         
-        // Also highlight the correct answer
         const correctButton = query(`.yt-quiz-option[data-option="${correctAnswer}"]`);
         if(correctButton) correctButton.classList.add('correct');
     }
 
-    // Toggle navigation buttons
     query('#yt-quiz-submit').classList.add('hidden');
     query('#yt-quiz-next').classList.remove('hidden');
 
-    // Check if it's the last question
     if (currentQuestionIndex >= quizData.length - 1) {
         query('#yt-quiz-next').textContent = "Show Results";
     }
 }
-
 
 function handleNext() {
   currentQuestionIndex++;
@@ -248,14 +253,16 @@ function handleRestart() {
     showQuestion(currentQuestionIndex);
 }
 
+// **FIXED** This function is now more robust.
 function closeQuiz() {
-  if (quizContainer) {
-    document.body.removeChild(quizContainer);
-    quizContainer = null;
+  // Always find the element by its ID before trying to remove it.
+  const container = document.getElementById('yt-quiz-container');
+  if (container) {
+    container.remove();
   }
-  resetButton(true); // Show the generate button again
+  quizContainer = null; // Reset the global variable
+  resetButton(true);
 }
-
 
 // --- Utility Functions ---
 
@@ -266,9 +273,13 @@ function closeQuiz() {
 function resetButton(shouldShow = false) {
   const button = document.getElementById('yt-quiz-button');
   if (button) {
-    button.innerHTML = '🧠 Generate Quiz';
+    const buttonText = button.querySelector('.yt-quiz-button-text');
+    button.classList.remove('loading');
+    if (buttonText) {
+        buttonText.textContent = '🧠 Generate Quiz';
+    }
     button.disabled = false;
-    button.onclick = () => handleQuizGeneration('fast');
+    button.onclick = () => handleQuizGeneration();
     if (shouldShow) {
         button.style.display = 'block';
     }
@@ -276,10 +287,9 @@ function resetButton(shouldShow = false) {
 }
 
 /**
- * Shows an error message to the user. Replaces alert().
+ * Shows an error message to the user.
  */
 function showError(message) {
-    // Clear any existing timer to prevent the old timeout from firing
     if (errorClearTimer) {
         clearTimeout(errorClearTimer);
     }
@@ -304,9 +314,7 @@ function showError(message) {
     }
     errorBox.textContent = message;
 
-    // Set a new timer to remove the error box
     errorClearTimer = setTimeout(() => {
-        // Before removing, check if the element is still in the document
         if (errorBox && document.body.contains(errorBox)) {
             document.body.removeChild(errorBox);
         }
@@ -319,7 +327,6 @@ function showError(message) {
  */
 const observePage = () => {
   if (window.location.pathname === '/watch') {
-    // A small delay ensures the page is ready
     setTimeout(createQuizButton, 1000);
   }
 };

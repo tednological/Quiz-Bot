@@ -1,30 +1,31 @@
 <div id="yt-quiz-container">
-  <div id="yt-quiz-modal">
-    <h2 id="yt-quiz-title">YouTube Knowledge Check</h2>
+  <div class="yt-quiz-header">
+    <h3>YouTube Quiz</h3>
+    <span id="yt-quiz-x-close">&times;</span>
+  </div>
 
+  <div id="yt-quiz-body">
     <div id="yt-quiz-question-area">
-      <p id="yt-quiz-question">Loading question...</p>
-
+      <p id="yt-quiz-question">Question placeholder...</p>
       <div id="yt-quiz-options">
-        <button class="yt-quiz-option" data-option="A">A) Option A</button>
-        <button class="yt-quiz-option" data-option="B">B) Option B</button>
-        <button class="yt-quiz-option" data-option="C">C) Option C</button>
-        <button class="yt-quiz-option" data-option="D">D) Option D</button>
+        <button class="yt-quiz-option" data-option="A">A)</button>
+        <button class="yt-quiz-option" data-option="B">B)</button>
+        <button class="yt-quiz-option" data-option="C">C)</button>
+        <button class="yt-quiz-option" data-option="D">D)</button>
       </div>
-
-      <p id="yt-quiz-feedback" class="hidden"></p>
-    </div>
-
-    <div id="yt-quiz-navigation">
-      <button id="yt-quiz-submit" disabled>Submit Answer</button>
-      <button id="yt-quiz-next" class="hidden">Next Question</button>
-      <button id="yt-quiz-close">Close Quiz</button>
+      <div id="yt-quiz-feedback" class="hidden"></div>
     </div>
 
     <div id="yt-quiz-results" class="hidden">
-      <h3>Quiz Complete!</h3>
-      <p>Your score: <span id="yt-quiz-score">0</span> / <span id="yt-quiz-total">0</span></p>
-      <button id="yt-quiz-restart">Restart Quiz</button>
+      <h3>Quiz Results</h3>
+      <p>You scored <span id="yt-quiz-score">0</span> out of <span id="yt-quiz-total">0</span>.</p>
+      <button id="yt-quiz-restart" class="yt-quiz-button">Restart Quiz</button>
     </div>
+  </div>
+
+  <div id="yt-quiz-navigation" class="yt-quiz-footer">
+    <button id="yt-quiz-submit" class="yt-quiz-button" disabled>Submit</button>
+    <button id="yt-quiz-next" class="yt-quiz-button hidden">Next Question</button>
+    <button id="yt-quiz-close" class="yt-quiz-button secondary">Close</button>
   </div>
 </div>

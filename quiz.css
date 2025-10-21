@@ -1,216 +1,194 @@
-/* Outer container to dim the background */
+/* --- Main Quiz Container --- */
 #yt-quiz-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
-  display: flex; /* Use flexbox for easy centering */
-  justify-content: center;
-  align-items: center;
-  z-index: 10000; /* Ensure it's on top of everything */
-  font-family: 'Roboto', sans-serif; /* Standard YouTube font */
-}
-
-/* The actual quiz modal pop-up */
-#yt-quiz-modal {
-  background-color: #282828; /* YouTube dark theme background */
-  color: #ffffff; /* White text */
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  max-width: 90vw;
+  background-color: #f9f9f9;
   border-radius: 12px;
-  padding: 30px;
-  width: 90%;
-  max-width: 600px; /* Max width for larger screens */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 10000;
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Space between sections */
-  max-height: 90vh; /* Max height to prevent overflow on smaller screens */
-  overflow-y: auto; /* Enable scrolling if content is too long */
+  font-family: 'Roboto', 'Arial', sans-serif;
+  overflow: hidden;
 }
 
-#yt-quiz-title {
-  text-align: center;
+/* --- Header --- */
+.yt-quiz-header {
+  padding: 15px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  position: relative; /* For positioning the close button */
+}
+
+.yt-quiz-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+/* --- "X" Close Button (Top Right) --- */
+#yt-quiz-x-close {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
   font-size: 24px;
-  margin-bottom: 15px;
-  color: #e6e6e6;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
 }
 
-/* Question area styling */
-#yt-quiz-question-area {
-  background-color: #383838;
-  border-radius: 8px;
+#yt-quiz-x-close:hover {
+  color: #000;
+}
+
+/* --- Body --- */
+#yt-quiz-body {
   padding: 20px;
-  margin-bottom: 15px;
+  flex-grow: 1;
 }
 
 #yt-quiz-question {
-  font-size: 18px;
+  font-size: 16px;
+  color: #222;
   margin-bottom: 20px;
-  line-height: 1.5;
-  color: #e6e6e6;
 }
 
-/* Options container */
 #yt-quiz-options {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Space between option buttons */
+  gap: 10px;
 }
 
-/* Individual option buttons */
 .yt-quiz-option {
-  background-color: #4a4a4a;
-  color: #ffffff;
-  border: 1px solid #5a5a5a;
-  border-radius: 6px;
-  padding: 12px 15px;
-  text-align: left;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
   width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-size: 15px;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-.yt-quiz-option:hover:not([disabled]) {
-  background-color: #606060;
-  border-color: #707070;
-}
-
-.yt-quiz-option:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #007bff; /* Highlight focus */
+.yt-quiz-option:hover {
+  background-color: #f0f0f0;
 }
 
 .yt-quiz-option.selected {
-  background-color: #007bff; /* Highlight selected option */
-  border-color: #007bff;
+  border-color: #065fd4;
+  background-color: #e5f0ff;
 }
 
 .yt-quiz-option.correct {
-  background-color: #28a745; /* Green for correct answer */
-  border-color: #28a745;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
 }
 
 .yt-quiz-option.incorrect {
-  background-color: #dc3545; /* Red for incorrect answer */
-  border-color: #dc3545;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
 }
 
-.yt-quiz-option[disabled] {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Feedback message (correct/incorrect) */
+/* --- Feedback --- */
 #yt-quiz-feedback {
   margin-top: 15px;
-  font-size: 16px;
-  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
   font-weight: bold;
 }
-
-#yt-quiz-feedback.correct-feedback {
-  color: #28a745;
+.correct-feedback {
+  background-color: #d4edda;
+  color: #155724;
+}
+.incorrect-feedback {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
-#yt-quiz-feedback.incorrect-feedback {
-  color: #dc3545;
-}
-
-/* Navigation buttons (Submit, Next, Close) */
-#yt-quiz-navigation {
-  display: flex;
-  justify-content: space-between; /* Distribute buttons */
-  gap: 15px; /* Space between navigation buttons */
-  margin-top: 20px;
-}
-
-#yt-quiz-submit,
-#yt-quiz-next,
-#yt-quiz-close,
-#yt-quiz-restart {
-  background-color: #007bff; /* Primary button color */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  flex-grow: 1; /* Allow buttons to grow and fill space */
-}
-
-#yt-quiz-submit:hover:not([disabled]),
-#yt-quiz-next:hover:not([disabled]),
-#yt-quiz-restart:hover:not([disabled]) {
-  background-color: #0056b3;
-}
-
-#yt-quiz-close {
-  background-color: #6c757d; /* Secondary button color for close */
-}
-
-#yt-quiz-close:hover {
-  background-color: #5a6268;
-}
-
-#yt-quiz-submit[disabled] {
-  background-color: #4a4a4a;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Hidden utility class */
-.hidden {
-  display: none !important;
-}
-
-/* Quiz Results section */
-#yt-quiz-results {
-  text-align: center;
-  padding: 20px;
-  background-color: #383838;
-  border-radius: 8px;
-}
-
+/* --- Results Screen --- */
 #yt-quiz-results h3 {
-  margin-bottom: 10px;
-  color: #e6e6e6;
-  font-size: 20px;
+  margin-top: 0;
+  text-align: center;
 }
 
 #yt-quiz-results p {
+  text-align: center;
   font-size: 18px;
   margin-bottom: 20px;
 }
 
-#yt-quiz-score, #yt-quiz-total {
-  font-weight: bold;
-  color: #007bff;
+/* --- Navigation & Footer --- */
+.yt-quiz-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  #yt-quiz-modal {
-    width: 95%;
-    padding: 20px;
-  }
+.yt-quiz-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-  .yt-quiz-option,
-  #yt-quiz-submit,
-  #yt-quiz-next,
-  #yt-quiz-close,
-  #yt-quiz-restart {
-    font-size: 14px;
-    padding: 10px 15px;
-  }
+.yt-quiz-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 
-  #yt-quiz-title {
-    font-size: 20px;
-  }
+#yt-quiz-submit, #yt-quiz-next, #yt-quiz-restart {
+  background-color: #065fd4;
+  color: white;
+}
+#yt-quiz-submit:hover, #yt-quiz-next:hover, #yt-quiz-restart:hover {
+  background-color: #054ab2;
+}
 
-  #yt-quiz-question {
-    font-size: 16px;
-  }
+.yt-quiz-button.secondary {
+  background-color: #eee;
+  color: #333;
+}
+.yt-quiz-button.secondary:hover {
+  background-color: #ddd;
+}
+
+/* --- Utility Classes --- */
+.hidden {
+  display: none;
+}
+
+/* --- Generate Button & Progress Bar --- */
+#yt-quiz-button {
+  position: relative; /* Needed for the progress bar positioning */
+  overflow: hidden;   /* Keeps the progress bar contained */
+}
+
+.yt-quiz-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  /* The initial transition is fast for responsiveness */
+  transition: width 0.3s ease;
+}
+
+#yt-quiz-button.loading .yt-quiz-progress-bar {
+  width: 100%;
+  transition: width 25s cubic-bezier(0.25, 1, 0.5, 1);
 }
